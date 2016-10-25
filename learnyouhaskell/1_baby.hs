@@ -10,4 +10,4 @@ doubleSmallNumber x = if x > 100
 -- http://learnyouahaskell.com/starting-out
 -- An intro to lists
 
--- vim: set expandtab
+-- vim: set expandtab:
