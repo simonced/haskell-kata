@@ -35,6 +35,4 @@ doubleSmallNumber x = if x > 100
 
 -- further reading:
 -- http://learnyouahaskell.com/starting-out
--- length takes a list and returns its length, obviously.
-
--- vim: set expandtab:
+-- I'm a list comprehension
