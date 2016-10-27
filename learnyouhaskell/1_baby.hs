@@ -22,7 +22,7 @@ doubleSmallNumber x = if x > 100
 -- -----------------
 -- ['a','b','c'] !! 1
 -- identical to "abc" !! 1
--- will return 2 (index 1 in the list)
+-- will return 'b' (index 1 in the list)
 
 -- also, some useful functions on lists
 -- ------------------------------------
@@ -30,9 +30,11 @@ doubleSmallNumber x = if x > 100
 -- tail returns the elements after the head
 -- last returns the last element
 -- init returns the elements before the last
+-- elem returns a boolean regarding the presence of an element in a list
 
 -- ======================================================================
 
 -- further reading:
--- http://learnyouahaskell.com/starting-out
--- I'm a list comprehension
+-- http://learnyouahaskell.com/types-and-typeclasses
+-- Believe the type
+
