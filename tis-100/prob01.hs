@@ -13,13 +13,21 @@ outB = [2, -6, 8, 7, 11, 43, 1]
 -- for that simple problem, they are identical
 
 -- process function
-process :: Int -> Int
+process :: Integer -> Integer
 process x = x
 -- simply returns the same parameter
 
 -- output check function
-check :: Int -> Int -> Bool
-check i o = o == process i
+check :: Integer -> Integer -> (Integer, Integer, Bool)
+check i o = (i, process i, o == process i)
+
+checkAll :: [Integer] -> [Integer] -> [(Integer, Integer, Bool)]
+checkAll [] [] = []
+checkAll (i:is) (o:os) = [check i o] ++ checkAll is os
+
+-- then testing with 
+-- checkAll inA ouA
+-- will display all tests and resuts
 
 -- simple way to have tuples of inputs and outputs
 -- zip outA (map process inA)
