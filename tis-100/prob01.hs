@@ -5,12 +5,18 @@
 -- each input data has to be copied to the corresponding output
 
 -- inputs
-inA = [4, 5, -1, 9, 8, 5, 6]::[Int]
-inB = [4, -6, 8, 7, 11, 43, 1]::[Int]
+inA :: [Int]
+inA = [4, 5, -1, 9, 8, 5, 6]
+
+inB :: [Int]
+inB = [4, -6, 8, 7, 11, 43, 1]
 
 -- expected outputs
-outA = [4, 5, -1, 9, 8, 5, 6]::[Int]
-outB = [4, -6, 8, 7, 11, 43, 1]::[Int]
+outA :: [Int]
+outA = [4, 5, -1, 9, 8, 5, 6]
+
+outB :: [Int]
+outB = [4, -6, 8, 7, 11, 43, 1]
 -- for that simple problem, they are identical
 
 -- process function
