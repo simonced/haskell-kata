@@ -1,3 +1,5 @@
+-- exercice address:
+-- https://leetcode.com/problems/fizz-buzz/
 
 -- my great implementation!
 fizzbuzz :: Int -> String
