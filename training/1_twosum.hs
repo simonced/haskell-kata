@@ -30,11 +30,13 @@ solution = [(x `elemIndex` list, y `elemIndex` list)
     | x <- list, y <- tail list, x+y==target]
 
 -- lets turn that into a function and let's try a bunch of patterns
-process :: Int -> [Int] -> (Maybe Int, Maybe Int)
-process t l = head  [(x `elemIndex` l, y `elemIndex` l)
-        | x <- l, y <- tail l, x + y == t]
+process :: Int -> [Int] -> Maybe (Maybe Int, Maybe Int)
+process t l
+    | set == [] = Nothing
+    | set /= [] = Just $ head set
+    where set = [(x `elemIndex` l, y `elemIndex` l) | x <- l, y <- tail l, x + y == t]
 
--- preparing a bunch of lists and targets to test
+-- preparing a bunch of lists to test
 list1 :: [Int]
 list1 = [1, 4, 6, 3, 8, 10, 14]
 
@@ -54,4 +56,4 @@ run = do
     print (process target list1)
     print (process target list2)
     print (process target list3)
-    --print (process target list4)
+    print (process target list4)
