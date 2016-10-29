@@ -30,8 +30,13 @@ check i o = (i, result, o == result)
     where result = process i
 
 checkAll :: [Int] -> [Int] -> [(Int, Int, Bool)]
-checkAll [] [] = []
-checkAll (i:is) (o:os) = (check i o):checkAll is os
+-- original solution
+--checkAll [] [] = []
+--checkAll (i:is) (o:os) = (check i o):checkAll is os
+
+-- other implementation proposed
+-- the uncurry thing is still a bit strange to me
+checkAll i o = map (uncurry check) (zip i o)
 
 -- another way to generate the list comprehension instead of checkAll
 -- could be:
