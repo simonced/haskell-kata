@@ -42,3 +42,5 @@ run = do
     print (checkAll inA outA)
     print (checkAll inB outB)
 
+main = do
+    run
