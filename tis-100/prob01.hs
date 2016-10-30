@@ -36,7 +36,11 @@ checkAll :: [Int] -> [Int] -> [(Int, Int, Bool)]
 
 -- other implementation proposed
 -- the uncurry thing is still a bit strange to me
-checkAll i o = map (uncurry check) (zip i o)
+--checkAll i o = map (uncurry check) (zip i o)
+
+-- or yet another function that I could use:
+checkAll i o = zipWith check i o
+-- it's getting shorter and shorter!
 
 -- another way to generate the list comprehension instead of checkAll
 -- could be:
