@@ -32,11 +32,14 @@ zigzagline word_ height_ start_ = do
         if start_ >= length word_
             then []
             else
-                word_ !! start_ : end ++ next
+                word_ !! start_ : last ++ next
         where
             phase = (height_ - 1) * 2
-            end = checkLast word_ $ start_ + phase
+            last = checkLast word_ $ start_ + phase
             next = zigzagline word_ height_ (start_+phase*2)
+            -- TODO
+            -- add middle, a character sometimes between start and
+            -- last
 
 
 -- checking if we are out of bound
@@ -46,9 +49,15 @@ checkLast word_ position_
     | otherwise = []
 
 
+-- trying my own higher order function
+zigzagline' (word_, height_, start_) = zigzagline word_ height_ start_
+
+
 -- main function doing the whole word
 zigzagword :: [Char] -> Int -> [Char]
 zigzagword word_ height_ = 
-        map (zigzagline word_ height_) [0..height_]
-        -- that doesn't compile, I feel curry and/or zip should be useful
-        -- here
+        concat (map zigzagline' $ [(word_, height_, x) | x <- [0..height_-1]])
+        -- feels cheap but works X_X
+        -- === !IDEA! ===
+        -- I might not need to map, I could apply the function inside the
+        -- list itself I feel...
