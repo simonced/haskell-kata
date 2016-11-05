@@ -27,37 +27,41 @@
 
 word = "PAYPALISHIRING"
 
+getPhase :: Int -> Int
+getPhase height_ = (height_ - 1) * 2
+
+
 zigzagline :: [Char] -> Int -> Int -> [Char]
 zigzagline word_ height_ start_ = do
         if start_ >= length word_
             then []
             else
-                word_ !! start_ : last ++ next
+                word_ !! start_ : middle ++ next
         where
-            phase = (height_ - 1) * 2
-            last = checkLast word_ $ start_ + phase
-            next = zigzagline word_ height_ (start_+phase*2)
-            -- TODO
-            -- add middle, a character sometimes between start and
-            -- last
+            phase = getPhase height_
+            middle = checkBefore word_ height_ start_
+            next = zigzagline word_ height_ $ start_+phase
 
 
--- checking if we are out of bound
-checkLast :: [Char] -> Int -> [Char]
-checkLast word_ position_
-    | position_ < length word_ = [word_ !! position_]
+checkBefore :: [Char] -> Int -> Int -> [Char]
+checkBefore word_ height_ start_
+    | level == 0 || level == height_-1 = []
+    | before < length word_ = [word_ !! before]
     | otherwise = []
+    where
+        before = start_ + phase - level * 2
+        phase = getPhase height_
+        level = findLevel height_ start_
 
 
--- trying my own higher order function
-zigzagline' (word_, height_, start_) = zigzagline word_ height_ start_
+-- finding the row level at which is the start position
+findLevel :: Int -> Int -> Int
+findLevel height_ start_
+    | start_ < height_ = start_
+    | otherwise = findLevel height_ $ start_ - getPhase height_
 
 
--- main function doing the whole word
+-- main function processing the whole word
 zigzagword :: [Char] -> Int -> [Char]
 zigzagword word_ height_ = 
-        concat (map zigzagline' $ [(word_, height_, x) | x <- [0..height_-1]])
-        -- feels cheap but works X_X
-        -- === !IDEA! ===
-        -- I might not need to map, I could apply the function inside the
-        -- list itself I feel...
+        concat ([zigzagline word_ height_ x | x <- [0..height_-1]])
