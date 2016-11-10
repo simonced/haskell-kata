@@ -29,6 +29,8 @@ parseEmail mailfile = do
 
 searchFromIn :: String -> String
 searchFromIn content = content =~ "From:.*<(.*)>" :: String
+-- I found a good solution to get only the email:
+-- head ("From: longstringofdoom! <simon@test.com>" =~ "From:.*<(.*)>" :: [[String]]) !! 1
 
 -- for now, we try our function
 main = do
