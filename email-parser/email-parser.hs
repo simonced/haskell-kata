@@ -20,23 +20,30 @@ parseEmail :: String -> IO MailData
 parseEmail mailfile = do
         filecontent <- readFile mailfile
         return MailData {
-            fromEmail = searchFromIn filecontent
-            ,subject = ""
+            fromEmail = searchFrom filecontent
+            ,subject = searchSubject filecontent
             ,spamScore = searchSpamScore filecontent
-            ,spamFlag = False
+            ,spamFlag = searchSpamFlag filecontent
             }
--- TODO subject and spamFlag
 
 
-searchFromIn :: String -> String
-searchFromIn content = head(content =~ "^From:.*<(.*)>" :: [[String]]) !! 1
+searchFrom :: String -> String
+searchFrom content = head(content =~ "^From:.*<(.*)>" :: [[String]]) !! 1
+
+
+searchSubject :: String -> String
+searchSubject content = head (content =~ "^Subject: (.*)" :: [[String]]) !! 1
+-- TODO deal with encoded subjects
 
 
 searchSpamScore :: String -> Float
 searchSpamScore content = read (head (content =~ "score=([0-9.]+)" :: [[String]]) !! 1) :: Float
 
+searchSpamFlag :: String -> Bool
+searchSpamFlag content = content =~ "^X-Spam-Flag: YES" :: Bool
+
 
 -- for now, we try our function
 main = parseEmail "emails\\All-Sport Cutting-Edge Headlight.  Great Holiday Gift. 75% OFF TODAY..eml"
-
+-- TODO parse all emails in folder and return a summary
 
