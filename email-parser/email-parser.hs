@@ -1,10 +1,23 @@
 -- will turn into a module once it's working
-
+--
 -- package: http://hackage.haskell.org/package/regex-posix
--- installation intructions "cabal install regex-posix"
--- if failed but finally worked. problem with firewall!
+-- $ cabal install regex-posix
+--
+-- also, I need directory package for files listing:
+-- $ cabal install directory
+--
+-- I might need to use stack and play with dependencies,
+-- since I need libraries for that program...
 
 import Text.Regex.Posix
+import System.Directory
+
+
+--  ____        _
+-- |  _ \  __ _| |_ __ _
+-- | | | |/ _` | __/ _` |
+-- | |_| | (_| | || (_| |
+-- |____/ \__,_|\__\__,_|
 
 -- basic data structure
 data MailData = MailData {
@@ -15,11 +28,16 @@ data MailData = MailData {
             } deriving (Show)
 
 
+--  __  __       _ _    __                  _   _
+-- |  \/  | __ _(_) |  / _|_   _ _ __   ___| |_(_) ___  _ __  ___ 
+-- | |\/| |/ _` | | | | |_| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+-- | |  | | (_| | | | |  _| |_| | | | | (__| |_| | (_) | | | \__ \
+-- |_|  |_|\__,_|_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
+
 -- this should open the file and extract the data we need
-parseEmail :: String -> IO MailData
-parseEmail mailfile = do
-        filecontent <- readFile mailfile
-        return MailData {
+parseEmailContent :: String -> MailData
+parseEmailContent filecontent = MailData {
             fromEmail = searchFrom filecontent
             ,subject = searchSubject filecontent
             ,spamScore = searchSpamScore filecontent
@@ -39,11 +57,46 @@ searchSubject content = head (content =~ "^Subject: (.*)" :: [[String]]) !! 1
 searchSpamScore :: String -> Float
 searchSpamScore content = read (head (content =~ "score=([0-9.]+)" :: [[String]]) !! 1) :: Float
 
+
 searchSpamFlag :: String -> Bool
 searchSpamFlag content = content =~ "^X-Spam-Flag: YES" :: Bool
 
 
--- for now, we try our function
-main = parseEmail "emails/email1.eml"
--- TODO parse all emails in folder and return a summary
+--  _     _     _   _             
+-- | |   (_)___| |_(_)_ __   __ _ 
+-- | |   | / __| __| | '_ \ / _` |
+-- | |___| \__ \ |_| | | | | (_| |
+-- |_____|_|___/\__|_|_| |_|\__, |
+--                          |___/ 
+--   __                  _   _                 
+--  / _|_   _ _ __   ___| |_(_) ___  _ __  ___ 
+-- | |_| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+-- |  _| |_| | | | | (__| |_| | (_) | | | \__ \
+-- |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
+
+-- first, simple array of the results of all mails we analysed
+searchSpamInDir :: FilePath -> IO [FilePath]
+searchSpamInDir dir = do
+    list <- listDirectory dir
+-- for now, we try our function
+    return [dir ++ "/" ++ file | file <- list]
+
+
+-- the part below is the one that I can't make compile...
+-- vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+parseEmails :: [FilePath] -> [MailData]
+parseEmails [] = []
+parseEmails (file:files) = do
+    filecontent <- readFile file
+    parseEmailContent filecontent : parseEmails files
+
+
+-- ======================================================================
+--  __  __    _    ___ _   _ 
+-- |  \/  |  / \  |_ _| \ | |
+-- | |\/| | / _ \  | ||  \| |
+-- | |  | |/ ___ \ | || |\  |
+-- |_|  |_/_/   \_\___|_| \_|
+
+-- NOT YET
