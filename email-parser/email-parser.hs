@@ -44,6 +44,6 @@ searchSpamFlag content = content =~ "^X-Spam-Flag: YES" :: Bool
 
 
 -- for now, we try our function
-main = parseEmail "emails\\All-Sport Cutting-Edge Headlight.  Great Holiday Gift. 75% OFF TODAY..eml"
+main = parseEmail "emails/email1.eml"
 -- TODO parse all emails in folder and return a summary
 
