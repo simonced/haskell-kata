@@ -76,20 +76,20 @@ searchSpamFlag content = content =~ "^X-Spam-Flag: YES" :: Bool
 
 
 -- first, simple array of the results of all mails we analysed
-searchSpamInDir :: FilePath -> IO [FilePath]
-searchSpamInDir dir = do
+makeEmailsList :: FilePath -> IO [FilePath]
+makeEmailsList dir = do
     list <- listDirectory dir
--- for now, we try our function
     return [dir ++ "/" ++ file | file <- list]
 
 
 -- the part below is the one that I can't make compile...
 -- vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-parseEmails :: [FilePath] -> [MailData]
-parseEmails [] = []
+parseEmails :: [FilePath] -> IO [MailData]
+parseEmails [] = return []
 parseEmails (file:files) = do
     filecontent <- readFile file
-    parseEmailContent filecontent : parseEmails files
+    rest <- parseEmails files
+    return (parseEmailContent filecontent : rest)
 
 
 -- ======================================================================
@@ -100,3 +100,8 @@ parseEmails (file:files) = do
 -- |_|  |_/_/   \_\___|_| \_|
 
 -- NOT YET
+main = do
+        emails <- makeEmailsList "emails"
+        parseEmails emails
+
+
