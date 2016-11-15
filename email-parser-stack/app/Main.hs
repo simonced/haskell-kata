@@ -10,5 +10,5 @@ import Lib
 main :: IO ()
 main = do
         emails <- makeEmailsList "../email-parser/emails"
-        parseEmails emails
-        print "end"
+        results <- parseEmails emails
+        print results
