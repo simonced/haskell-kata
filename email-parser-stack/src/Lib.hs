@@ -1,11 +1,9 @@
 module Lib
-    --( someFunc
-    --) 
-    -- exporting everything?
+    (
+        makeEmailsList
+       ,parseEmails
+    ) 
     where
-
---someFunc :: IO ()
---someFunc = putStrLn "someFunc"
 
 -- ======================================================================
 
@@ -93,8 +91,7 @@ makeEmailsList dir = do
     return [dir ++ "/" ++ file | file <- list]
 
 
--- the part below is the one that I can't make compile...
--- vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+-- takes a list of emails and returns a list of corresponding MailData
 parseEmails :: [FilePath] -> IO [MailData]
 parseEmails [] = return []
 parseEmails (file:files) = do
