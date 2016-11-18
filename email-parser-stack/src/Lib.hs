@@ -1,8 +1,8 @@
 module Lib
-    (
-        makeEmailsList
-       ,parseEmails
-    ) 
+    --(
+    --    makeEmailsList
+    --   ,parseEmails
+    --) 
     where
 
 -- ======================================================================
@@ -69,6 +69,25 @@ searchSpamScore content = read (head (content =~ "score=([0-9.]+)" :: [[String]]
 
 searchSpamFlag :: String -> Bool
 searchSpamFlag content = content =~ "^X-Spam-Flag: YES" :: Bool
+
+
+
+--            _            _       _   _                 
+--   ___ __ _| | ___ _   _| | __ _| |_(_) ___  _ __  ___ 
+--  / __/ _` | |/ __| | | | |/ _` | __| |/ _ \| '_ \/ __|
+-- | (_| (_| | | (__| |_| | | (_| | |_| | (_) | | | \__ \
+--  \___\__,_|_|\___|\__,_|_|\__,_|\__|_|\___/|_| |_|___/
+--                                                      
+
+avgSpamRate :: [MailData] -> Float
+avgSpamRate list_ = sum list / elems
+    where
+        list = [(spamScore x)|x<- list_]
+        elems = fromIntegral (length list_) -- to return a Float
+
+-- simple test in stack ghci:
+-- test <- run
+-- avgSpamRate test
 
 
 --  _     _     _   _             

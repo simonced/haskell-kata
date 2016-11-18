@@ -6,9 +6,16 @@ import Lib
 --import Regex.Posix
 --import System.Directory
 
+-- this function simply allows me to get the MailData I need
+-- I'll use it to test other functions
+run :: IO [MailData]
+run = do
+        emails <- makeEmailsList "emails"
+        results <- parseEmails emails
+        return (results)
+
 
 main :: IO ()
 main = do
-        emails <- makeEmailsList "emails"
-        results <- parseEmails emails
-        print results
+        d <- run
+        print d
