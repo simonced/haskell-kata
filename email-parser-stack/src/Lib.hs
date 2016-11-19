@@ -82,12 +82,42 @@ searchSpamFlag content = content =~ "^X-Spam-Flag: YES" :: Bool
 avgSpamRate :: [MailData] -> Float
 avgSpamRate list_ = sum list / elems
     where
-        list = [(spamScore x)|x<- list_]
+        list = [(spamScore x)|x <- list_]
         elems = fromIntegral (length list_) -- to return a Float
 
 -- simple test in stack ghci:
 -- test <- run
 -- avgSpamRate test
+
+data SpamFromData = SpamFromData ( String, Int ) deriving (Show)
+-- the string is the "matched" from entry
+-- and Int is the count of occurences of that string
+
+aggSpamFrom :: String -> [SpamFromData] -> [SpamFromData]
+aggSpamFrom email [] = SpamFromData (email, 1) : [] -- easy case first
+aggSpamFrom email agg = undefined
+
+-- I nedd to compare the tails of strings...
+
+-- compare from head, to compare from tail, strings will have to bve reversed first
+-- will return the number of characters that matches from head
+-- no better idea for now
+commonPart :: String -> String -> Int -> Int
+commonPart (m1:m1s) (m2:m2s) counter
+  | m1 == m2 = 1 + commonPart m1s m2s counter
+  | otherwise = counter
+
+
+compareEmailTail :: String -> String -> String
+compareEmailTail email1 email2 = reverse $ take common remail1
+  where
+    remail1 = reverse email1
+    remail2 = reverse email2
+    common = commonPart remail1 remail2 0
+
+-- 2 simple tests
+-- test = compareEmailTail "test@example.org" "toto@email.com"
+test = compareEmailTail "test@example.org" "toto@email.org"
 
 
 --  _     _     _   _             
