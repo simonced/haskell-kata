@@ -4,19 +4,15 @@ module Lib
     --   ,parseEmails
     --) 
     where
+-- currently exporting everything while testing in ghci
 
 -- ======================================================================
 
--- will turn into a module once it's working
---
--- package: http://hackage.haskell.org/package/regex-posix
--- $ cabal install regex-posix
---
--- also, I need directory package for files listing:
--- $ cabal install directory
---
--- I might need to use stack and play with dependencies,
--- since I need libraries for that program...
+-- packages I need:
+-- directory
+-- regex-posix
+
+
 
 import Text.Regex.Posix
 import System.Directory
@@ -103,9 +99,9 @@ avgSpamRate list_ = sum list / elems
         elems = fromIntegral (length list_) -- to return a Float
 
 -- simple test in stack ghci:
--- test <- run
--- avgSpamRate test
-
+-- > test <- run
+-- > avgSpamRate test
+-- run is a simple shortcut to launch main function with directory to parse as parameter
 
 -- a simple idea is to compare an email to all the others with compareEmailTail
 -- and only keep the longer "part in common" found if any
@@ -114,8 +110,11 @@ compareEmails _ [] = []
 compareEmails baseEmail (fst:emails) = (compareEmailTail baseEmail fst) : (compareEmails baseEmail emails)
 -- this should build a list of all possible common tails between the list of emails
 
--- ghci simple testing function
+
 -- for now, only does it with the first email against all the others
+-- TODO loop the same way with the next 2 entries in the list so
+-- we compare the first with everything after,
+-- then we compare the second with everything after it etc...
 compareAllEmails :: [MailData] -> [String]
 compareAllEmails emails = compareEmails (head emailsList) (tail emailsList)
     where
