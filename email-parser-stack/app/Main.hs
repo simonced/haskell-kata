@@ -6,6 +6,8 @@ import Lib
 --import Regex.Posix
 --import System.Directory
 
+
+-- simple tools to test in ghci
 -- this function simply allows me to get the MailData I need
 -- I'll use it to test other functions
 run :: IO [MailData]

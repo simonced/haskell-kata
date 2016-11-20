@@ -28,13 +28,30 @@ import System.Directory
 -- | |_| | (_| | || (_| |
 -- |____/ \__,_|\__\__,_|
 
+
+--  _____                      
+-- |_   _|   _ _ __   ___  ___ 
+--   | || | | | '_ \ / _ \/ __|
+--   | || |_| | |_) |  __/\__ \
+--   |_| \__, | .__/ \___||___/
+--       |___/|_|              
+
+type Email = String
+
+
 -- basic data structure
 data MailData = MailData {
-            fromEmail :: String
+            fromEmail :: Email
             ,subject :: String
             ,spamScore :: Float
             ,spamFlag :: Bool
             } deriving (Show)
+
+
+data SpamFromData = SpamFromData ( String, Int ) deriving (Show)
+-- the string is the "matched" from entry
+-- and Int is the count of occurences of that string
+-- intended to be calculated by groupAndCountUniques below
 
 
 --  __  __       _ _    __                  _   _
@@ -89,15 +106,31 @@ avgSpamRate list_ = sum list / elems
 -- test <- run
 -- avgSpamRate test
 
-data SpamFromData = SpamFromData ( String, Int ) deriving (Show)
--- the string is the "matched" from entry
--- and Int is the count of occurences of that string
 
-aggSpamFrom :: String -> [SpamFromData] -> [SpamFromData]
-aggSpamFrom email [] = SpamFromData (email, 1) : [] -- easy case first
-aggSpamFrom email agg = undefined
+-- a simple idea is to compare an email to all the others with compareEmailTail
+-- and only keep the longer "part in common" found if any
+compareEmails :: Email -> [Email] -> [String]
+compareEmails _ [] = []
+compareEmails baseEmail (fst:emails) = (compareEmailTail baseEmail fst) : (compareEmails baseEmail emails)
+-- this should build a list of all possible common tails between the list of emails
 
--- I nedd to compare the tails of strings...
+-- ghci simple testing function
+-- for now, only does it with the first email against all the others
+compareAllEmails :: [MailData] -> [String]
+compareAllEmails emails = compareEmails (head emailsList) (tail emailsList)
+    where
+    emailsList = [fromEmail x | x <- emails]
+-- TODO group by longer occurence 
+-- and maybe only take the first
+-- something like groupAndCountUniques bellow?
+
+
+-- TODO
+groupAndCountUniques :: [String] -> [SpamFromData]
+groupAndCountUniques email = undefined
+
+
+-- I nedd to compare the tails of strings... >>>
 
 -- compare from head, to compare from tail, strings will have to bve reversed first
 -- will return the number of characters that matches from head
@@ -108,7 +141,7 @@ commonPart (m1:m1s) (m2:m2s) counter
   | otherwise = counter
 
 
-compareEmailTail :: String -> String -> String
+compareEmailTail :: Email -> Email -> String
 compareEmailTail email1 email2 = reverse $ take common remail1
   where
     remail1 = reverse email1
@@ -116,9 +149,9 @@ compareEmailTail email1 email2 = reverse $ take common remail1
     common = commonPart remail1 remail2 0
 
 -- 2 simple tests
--- test = compareEmailTail "test@example.org" "toto@email.com"
-test = compareEmailTail "test@example.org" "toto@email.org"
-
+--test = compareEmailTail "test@example.org" "toto@email.com"
+--test = compareEmailTail "test@example.org" "toto@email.org"
+-- <<<
 
 --  _     _     _   _             
 -- | |   (_)___| |_(_)_ __   __ _ 
