@@ -126,7 +126,26 @@ compareAllEmails emails = compareEmails (head emailsList) (tail emailsList)
 
 -- TODO
 groupAndCountUniques :: [String] -> [SpamFromData]
-groupAndCountUniques email = undefined
+groupAndCountUniques (x:xs) = undefined
+-- using the following function like so:
+--   if x already counted (history list?),
+--      skip it and count the next entries
+--   else
+--     makeSpamFromData x countUniques xs x
+--     and build a list
+
+
+-- given a comparison, will count how many of that string is
+-- repeated in the list
+-- NOTE: there might be an existing lib for that, I'll search later
+countUniques :: [String] -> String -> Int
+countUniques [] _ = 0
+countUniques (x:xs) comp
+    | comp == x = 1 + countNext
+    | otherwise = countNext
+    where
+        countNext = countUniques xs comp
+    -- STILL WIP!
 
 
 -- I nedd to compare the tails of strings... >>>
