@@ -105,9 +105,10 @@ avgSpamRate list_ = sum list / elems
 
 -- a simple idea is to compare an email to all the others with compareEmailTail
 -- and only keep the longer "part in common" found if any
-compareEmails :: Email -> [Email] -> [String]
-compareEmails _ [] = []
-compareEmails baseEmail (fst:emails) = (compareEmailTail baseEmail fst) : (compareEmails baseEmail emails)
+compareEmails :: Email -> [Email] -> Maybe [String]
+compareEmails _ [] = Nothing
+compareEmails baseEmail emails = mapM (compareEmailTail  baseEmail) emails
+  -- (compareEmailTail baseEmail fst) : (compareEmails baseEmail emails)
 -- this should build a list of all possible common tails between the list of emails
 
 
@@ -115,10 +116,10 @@ compareEmails baseEmail (fst:emails) = (compareEmailTail baseEmail fst) : (compa
 -- TODO loop the same way with the next 2 entries in the list so
 -- we compare the first with everything after,
 -- then we compare the second with everything after it etc...
-compareAllEmails :: [MailData] -> [String]
+compareAllEmails :: [MailData] -> Maybe [String]
 compareAllEmails emails = compareEmails (head emailsList) (tail emailsList)
     where
-    emailsList = [fromEmail x | x <- emails]
+      emailsList = [fromEmail x | x <- emails]
 -- TODO group by longer occurence 
 -- and maybe only take the first
 -- something like groupAndCountUniques bellow?
@@ -146,10 +147,17 @@ countUniques (x:xs) comp
     where
         countNext = countUniques xs comp
     -- STILL WIP!
+-- test function
+test = do
+  emailsList <- makeEmailsList "emails"
+  emailsData <- parseEmails emailsList
+  return [fromEmail x | x <- emailsData]
+  -- let groups = compareAllEmails emailsData
+  -- return groups
+  
 
 
 -- I nedd to compare the tails of strings... >>>
-
 -- compare from head, to compare from tail, strings will have to bve reversed first
 -- will return the number of characters that matches from head
 -- no better idea for now
@@ -159,8 +167,11 @@ commonPart (m1:m1s) (m2:m2s) counter
   | otherwise = counter
 
 
-compareEmailTail :: Email -> Email -> String
-compareEmailTail email1 email2 = reverse $ take common remail1
+-- compares 2 strings (emails) and returns the common part if any
+compareEmailTail :: Email -> Email -> Maybe String
+compareEmailTail email1 email2
+  | common > 0 = Just $ reverse $ take common remail1
+  | otherwise = Nothing
   where
     remail1 = reverse email1
     remail2 = reverse email2
@@ -170,6 +181,7 @@ compareEmailTail email1 email2 = reverse $ take common remail1
 --test = compareEmailTail "test@example.org" "toto@email.com"
 --test = compareEmailTail "test@example.org" "toto@email.org"
 -- <<<
+
 
 --  _     _     _   _             
 -- | |   (_)___| |_(_)_ __   __ _ 
