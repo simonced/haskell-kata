@@ -145,8 +145,6 @@ test = do
   emailsList <- makeEmailsList "emails"
   emailsData <- parseEmails emailsList
   return [fromEmail x | x <- emailsData]
-  -- let groups = compareAllEmails emailsData
-  -- return groups
 
 
 --  _     _     _   _             
