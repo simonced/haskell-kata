@@ -20,6 +20,7 @@ library
                        -- dependencies for my project
                      , regex-posix
                      , directory
+                     , containers >= 0.5
   default-language:    Haskell2010
 
 executable email-parser
@@ -28,9 +29,6 @@ executable email-parser
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
                      , email-parser-stack
-                       -- dependencies for my project
-                     , regex-posix
-                     , directory
   default-language:    Haskell2010
 
 test-suite email-parser-stack-test

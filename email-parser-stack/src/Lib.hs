@@ -13,9 +13,10 @@ module Lib
 -- regex-posix
 
 
-
-import Text.Regex.Posix
-import System.Directory
+import           Text.Regex.Posix
+import           System.Directory
+import           Data.Maybe -- needed for MaybeMap
+import qualified Data.Map as M
 
 
 --  ____        _
@@ -42,12 +43,6 @@ data MailData = MailData {
             ,spamScore :: Float
             ,spamFlag :: Bool
             } deriving (Show)
-
-
-data SpamFromData = SpamFromData ( String, Int ) deriving (Show)
--- the string is the "matched" from entry
--- and Int is the count of occurences of that string
--- intended to be calculated by groupAndCountUniques below
 
 
 --  __  __       _ _    __                  _   _
@@ -84,7 +79,6 @@ searchSpamFlag :: String -> Bool
 searchSpamFlag content = content =~ "^X-Spam-Flag: YES" :: Bool
 
 
-
 --            _            _       _   _                 
 --   ___ __ _| | ___ _   _| | __ _| |_(_) ___  _ __  ___ 
 --  / __/ _` | |/ __| | | | |/ _` | __| |/ _ \| '_ \/ __|
@@ -102,59 +96,6 @@ avgSpamRate list_ = sum list / elems
 -- > test <- run
 -- > avgSpamRate test
 -- run is a simple shortcut to launch main function with directory to parse as parameter
-
--- a simple idea is to compare an email to all the others with compareEmailTail
--- and only keep the longer "part in common" found if any
-compareEmails :: Email -> [Email] -> Maybe [String]
-compareEmails _ [] = Nothing
-compareEmails baseEmail emails = mapM (compareEmailTail  baseEmail) emails
-  -- (compareEmailTail baseEmail fst) : (compareEmails baseEmail emails)
--- this should build a list of all possible common tails between the list of emails
-
-
--- for now, only does it with the first email against all the others
--- TODO loop the same way with the next 2 entries in the list so
--- we compare the first with everything after,
--- then we compare the second with everything after it etc...
-compareAllEmails :: [MailData] -> Maybe [String]
-compareAllEmails emails = compareEmails (head emailsList) (tail emailsList)
-    where
-      emailsList = [fromEmail x | x <- emails]
--- TODO group by longer occurence 
--- and maybe only take the first
--- something like groupAndCountUniques bellow?
-
-
--- TODO
-groupAndCountUniques :: [String] -> [SpamFromData]
-groupAndCountUniques (x:xs) = undefined
--- using the following function like so:
---   if x already counted (history list?),
---      skip it and count the next entries
---   else
---     makeSpamFromData x countUniques xs x
---     and build a list
-
-
--- given a comparison, will count how many of that string is
--- repeated in the list
--- NOTE: there might be an existing lib for that, I'll search later
-countUniques :: [String] -> String -> Int
-countUniques [] _ = 0
-countUniques (x:xs) comp
-    | comp == x = 1 + countNext
-    | otherwise = countNext
-    where
-        countNext = countUniques xs comp
-    -- STILL WIP!
--- test function
-test = do
-  emailsList <- makeEmailsList "emails"
-  emailsData <- parseEmails emailsList
-  return [fromEmail x | x <- emailsData]
-  -- let groups = compareAllEmails emailsData
-  -- return groups
-  
 
 
 -- I nedd to compare the tails of strings... >>>
@@ -176,11 +117,36 @@ compareEmailTail email1 email2
     remail1 = reverse email1
     remail2 = reverse email2
     common = commonPart remail1 remail2 0
-
--- 2 simple tests
---test = compareEmailTail "test@example.org" "toto@email.com"
---test = compareEmailTail "test@example.org" "toto@email.org"
 -- <<<
+
+
+compareOneToList :: Email -> [Email] -> [String]
+compareOneToList email list = mapMaybe (compareEmailTail email) list
+
+
+compareAllList :: [Email] -> [String]
+compareAllList [x] = [] -- if one value is left, we have nothing to compare
+compareAllList (email:list) = compareOneToList email list ++ compareAllList list
+-- this is not a perfect calculation yet, but it'll do for now
+-- FIXME do a better algorithm
+
+
+groupUniques :: [String] -> M.Map String Int
+groupUniques [] = M.empty
+groupUniques (x:xs) = M.insertWith (\ new old -> new + old) x 1 map
+    where map = groupUniques xs
+-- easy way to test this:
+-- list <- test
+-- groupUniques . compareAllList $ list
+
+
+-- testing function
+test = do
+  emailsList <- makeEmailsList "emails"
+  emailsData <- parseEmails emailsList
+  return [fromEmail x | x <- emailsData]
+  -- let groups = compareAllEmails emailsData
+  -- return groups
 
 
 --  _     _     _   _             
