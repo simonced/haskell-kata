@@ -1,6 +1,7 @@
 module Main where
 
 import Lib
+import qualified Data.Map as M
 
 lookupFolder = "emails"
 
@@ -17,9 +18,22 @@ lookupFolder = "emails"
 
 displayFromStats :: [MailData] -> IO ()
 displayFromStats emailsData_ = do
+        let elements = groupUniques . compareAllList $ [fromEmail x | x <- emailsData_]
+        print elements
         -- TODO make a better formated listing
-        print $ groupUniques . compareAllList $ [fromEmail x | x <- emailsData_]
+        -- attempts
+        -- print $ (M.toList elements) !! 1
 
+
+
+-- testing to pad display of emails
+-- left is the size to match by adding spaces
+-- to the left of the provided string
+padLeft :: Int -> String -> String
+padLeft size text
+    | missing > 0 = (replicate missing ' ') ++ text
+    | otherwise = text
+    where missing = size - (length text)
 
 
 --                  _       
