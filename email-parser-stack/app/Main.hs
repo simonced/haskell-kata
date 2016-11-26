@@ -16,14 +16,15 @@ lookupFolder = "emails"
 --                                                                         
 
 
-displayFromStats :: [MailData] -> IO ()
-displayFromStats emailsData_ = do
-        let elements = groupUniques . compareAllList $ [fromEmail x | x <- emailsData_]
+displayFromStats :: [Email] -> IO ()
+displayFromStats list = do
+        let elements = groupUniques $ compareAllList list
         print elements
-        -- TODO make a better formated listing
-        -- attempts
-        -- print $ (M.toList elements) !! 1
+        --print list
 
+
+displayEmailsOnly :: [Email] -> IO ()
+displayEmailsOnly list = mapM_ print (map (padLeft (maximum (map length list))) list)
 
 
 -- testing to pad display of emails
@@ -48,4 +49,6 @@ main :: IO ()
 main = do
         emailsFiles <- makeEmailsList lookupFolder
         emailsData <- parseEmails emailsFiles
-        displayFromStats emailsData
+        let emailsOnly = [fromEmail x | x <- emailsData]
+        displayEmailsOnly emailsOnly
+        displayFromStats emailsOnly
