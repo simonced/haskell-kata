@@ -1,0 +1,8 @@
+flags: {}
+extra-package-dbs: []
+packages:
+- '.'
+extra-deps:
+- wx-0.11.1.2
+- wxcore-0.11.1.2
+resolver: lts-7.10
