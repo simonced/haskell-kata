@@ -1,4 +1,4 @@
-module Lib
+module EmailParser.Lib
     --(
     --    makeEmailsList
     --   ,parseEmails
@@ -7,10 +7,6 @@ module Lib
 -- currently exporting everything while testing in ghci
 
 -- ======================================================================
-
--- packages I need:
--- directory
--- regex-posix
 
 
 import           Text.Regex.Posix

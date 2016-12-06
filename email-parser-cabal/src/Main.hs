@@ -1,6 +1,7 @@
 module Main where
 
-import Lib
+import EmailParser.Lib
+
 import qualified Data.Map as M
 
 import Control.Monad (void)
@@ -11,7 +12,7 @@ import Safe          (readMay)
 import qualified Graphics.UI.Threepenny as UI
 import Graphics.UI.Threepenny.Core
 
-lookupFolder = "emails"
+lookupFolder = "../emails"
 
 -- ======================================================================
 
@@ -46,6 +47,13 @@ padLeft size text
 
 
 
+run = do
+        emailsFiles <- makeEmailsList lookupFolder
+        emailsData <- parseEmails emailsFiles
+        let emailsOnly = [fromEmail x | x <- emailsData]
+        displayEmailsOnly emailsOnly
+        displayFromStats emailsOnly
+
 
 --                  _       
 --  _ __ ___   __ _(_)_ __  
@@ -55,13 +63,8 @@ padLeft size text
 --                          
 
 
---main :: IO ()
---main = do
---        emailsFiles <- makeEmailsList lookupFolder
---        emailsData <- parseEmails emailsFiles
---        let emailsOnly = [fromEmail x | x <- emailsData]
---        displayEmailsOnly emailsOnly
---        displayFromStats emailsOnly
+main :: IO ()
+-- main = run
 
 -- threepenny version (start)
 main = startGUI defaultConfig setup
