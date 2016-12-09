@@ -55,6 +55,11 @@ run = do
         displayFromStats emailsOnly
 
 
+readEmails = do
+    emailsFiles <- makeEmailsList lookupFolder
+    emailsData <- parseEmails emailsFiles
+    return emailsData
+
 --                  _       
 --  _ __ ___   __ _(_)_ __  
 -- | '_ ` _ \ / _` | | '_ \ 
@@ -67,7 +72,8 @@ main :: IO ()
 -- main = run
 
 -- threepenny version (start)
-main = startGUI defaultConfig setup
+main = do
+    startGUI defaultConfig setup
 
 {-----------------------------------------------------------------------------
     Main
@@ -76,26 +82,41 @@ main = startGUI defaultConfig setup
 -- for now, copy-pasted sample
 setup :: Window -> UI ()
 setup window = void $ do
-    return window # set title "Currency Converter"
+    return window # set title "Emails data"
 
-    dollar <- UI.input
-    euro   <- UI.input
-    
+    let emailsData = readEmails
+
     getBody window #+ [
-            column [
-                grid [[string "Dollar:", element dollar]
-                     ,[string "Euro:"  , element euro  ]]
-            , string "Amounts update while typing."
-            ]]
+            mkElement "h1" # set text "Current emails analysed"
+            ,column [
+                grid [
+                    [string "Email", string "spam score"]
+                    -- TODO I need such settup to fit in here, how?
+                    [[string "test", string "4.5"],[string "test", string "4.5"]]
+                    -- TODO idea of getting the real values
+                    --,[[string $ fromEmail d, string $ spamScore d] | d <- emailsData ]
+                ]
+            ]
+        ]
 
-    euroIn   <- stepper "0" $ UI.valueChange euro
-    dollarIn <- stepper "0" $ UI.valueChange dollar
-    let
-        rate = 0.7 :: Double
-        withString f = maybe "-" (printf "%.2f") . fmap f . readMay
-    
-        dollarOut = withString (/ rate) <$> euroIn
-        euroOut   = withString (* rate) <$> dollarIn
-    
-    element euro   # sink value euroOut
-    element dollar # sink value dollarOut
+    --dollar <- UI.input
+    --euro   <- UI.input
+    --
+    --getBody window #+ [
+    --        column [
+    --            grid [[string "Dollar:", element dollar]
+    --                 ,[string "Euro:"  , element euro  ]]
+    --        , string "Amounts update while typing."
+    --        ]]
+    --
+    --euroIn   <- stepper "0" $ UI.valueChange euro
+    --dollarIn <- stepper "0" $ UI.valueChange dollar
+    --let
+    --    rate = 0.7 :: Double
+    --    withString f = maybe "-" (printf "%.2f") . fmap f . readMay
+    --
+    --    dollarOut = withString (/ rate) <$> euroIn
+    --    euroOut   = withString (* rate) <$> dollarIn
+    --
+    --element euro   # sink value euroOut
+    --element dollar # sink value dollarOut
