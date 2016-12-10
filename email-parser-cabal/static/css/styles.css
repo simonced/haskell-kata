@@ -1,0 +1,32 @@
+
+.alert {
+	border: 1px solid lightgrey;
+	color: black;
+	padding: 10px;
+	border-radius: 5px;
+}
+
+.alert-info {
+	border-color: blue;
+	background-color: rgba(0, 0, 255, 0.2);
+	color: blue;
+}
+
+
+.table {
+	border-collapse: collapse;
+}
+
+.table-list .table-cell {
+	border: 1px solid grey;
+	padding: 5px;
+}
+
+.table-list .table-row:first-child .table-cell {
+	font-weight: bold;
+	text-align: center;
+}
+
+.table-list .table-row:nth-child(n+1) .table-cell {
+	text-align: right;
+}

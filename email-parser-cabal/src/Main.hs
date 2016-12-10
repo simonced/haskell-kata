@@ -67,13 +67,15 @@ readEmails = do
 -- |_| |_| |_|\__,_|_|_| |_|
 --                          
 
-
 main :: IO ()
 -- main = run
 
 -- threepenny version (start)
 main = do
-    startGUI defaultConfig setup
+    startGUI defaultConfig
+        {
+            jsStatic = Just "static"
+        } setup
 
 {-----------------------------------------------------------------------------
     Main
@@ -84,39 +86,23 @@ setup :: Window -> UI ()
 setup window = void $ do
     return window # set title "Emails data"
 
-    let emailsData = readEmails
+    -- main settings for the client
+    UI.addStyleSheet window "styles.css"
+
+    --let emailsData = do liftIO $ readEmails
+    list <- liftIO $ readEmails
+
+    let gridData = grid $ [string "Email", string "spam score"] : [[string $ fromEmail d, string $ show $ spamScore d] | d <- list]
 
     getBody window #+ [
             mkElement "h1" # set text "Current emails analysed"
             ,column [
-                grid [
-                    [string "Email", string "spam score"]
-                    -- TODO I need such settup to fit in here, how?
-                    [[string "test", string "4.5"],[string "test", string "4.5"]]
-                    -- TODO idea of getting the real values
-                    --,[[string $ fromEmail d, string $ spamScore d] | d <- emailsData ]
-                ]
+                gridData #. "table table-list"
             ]
+            ,mkElement "h2" # set text "Statistics"
+            ,string "TODO" #. "alert alert-info"
         ]
 
-    --dollar <- UI.input
-    --euro   <- UI.input
-    --
-    --getBody window #+ [
-    --        column [
-    --            grid [[string "Dollar:", element dollar]
-    --                 ,[string "Euro:"  , element euro  ]]
-    --        , string "Amounts update while typing."
-    --        ]]
-    --
-    --euroIn   <- stepper "0" $ UI.valueChange euro
-    --dollarIn <- stepper "0" $ UI.valueChange dollar
-    --let
-    --    rate = 0.7 :: Double
-    --    withString f = maybe "-" (printf "%.2f") . fmap f . readMay
-    --
-    --    dollarOut = withString (/ rate) <$> euroIn
-    --    euroOut   = withString (* rate) <$> dollarIn
-    --
-    --element euro   # sink value euroOut
-    --element dollar # sink value dollarOut
+
+    -- good repos for inspiration:
+    -- https://bitbucket.org/duplode/stunts-cartography/overview
