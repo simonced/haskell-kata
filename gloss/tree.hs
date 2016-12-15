@@ -18,9 +18,12 @@ wHeight = 600 :: Int
 window :: Display
 window = InWindow "test!" (wWidth, wHeight) (10, 10)
 
-stickColor = white
-stickSubAngle = pi/7
+stickColor = orange
+stickSubAngleLeft = pi/7
+stickSubAngleRight = pi/9
 stickSubLengthRatio = 0.8
+stickLengthMin = 10
+leafColor = green
 
 -- MAIN
 main :: IO ()
@@ -33,14 +36,16 @@ mytree = pictures $ makeSticks (0, fromIntegral (- wHeight) / 2) 100 0.0
 
 
 makeSticks :: Point -> Length -> Angle -> [Picture]
-makeSticks p1 l a = if l>10 then stick : children else []
+makeSticks p1 l a = stick : children
   where 
-        children = child1 ++ child2
-        child1 = makeSticks p2 (l*stickSubLengthRatio) (a + stickSubAngle)
-        child2 = makeSticks p2 (l*stickSubLengthRatio) (a - stickSubAngle)
-        stick = color stickColor $ line points
+        children = if lastStick then [] else child1 ++ child2
+        child1 = makeSticks p2 (l*stickSubLengthRatio) (a + stickSubAngleLeft)
+        child2 = makeSticks p2 (l*stickSubLengthRatio) (a - stickSubAngleRight)
+        stick = color getStickColor $ line points
         points = [p1, p2]
         p2 = calculatePoint2 p1 l a
+        lastStick = if l < stickLengthMin then True else False 
+        getStickColor = if lastStick then leafColor else stickColor
 
 
 calculatePoint2 :: Point -> Length -> Angle -> Point
