@@ -1,5 +1,4 @@
-import Data.List
-import Data.
+import Data.List (sort)
 
 -- problem url:
 -- https://leetcode.com/problems/single-number/
@@ -13,14 +12,15 @@ numbers = [1, 3, 5, 6, 1, 5, 8, 6, 2, 3]
 -- I could simply sort the list and check numbers 2 by 2, so easy!
 findTheOne :: [Int] -> Maybe Int
 -- casual case with more than 2 numbers to test
-findTheOne list
-    | length list == 1 = Just $ head list
-    | list !! 0 /= list !! 1 = Just $ list !! 0
-    | otherwise = findTheOne (tail ( tail list))
+findTheOne [] = Nothing
+findTheOne (x:[]) = Just x
+findTheOne (x:y:list)
+    | x /= y = Just x
+    | otherwise = findTheOne list
 
 -- easy testing :
--- findTheOne numbers
--- returns: Just 1
+-- findTheOne $ sort numbers
+-- returns: Just 2
 
 -- now a specific case
 numbers' :: [Int]
